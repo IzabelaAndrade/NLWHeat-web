@@ -12,9 +12,10 @@ type User = {
 type AuthResponse = {
   token: string;
   user: {
+    id: string;
     name: string;
-    avatar_url: string;
     login: string;
+    avatar_url: string;
     
   }
 }
@@ -41,7 +42,9 @@ export function AuthProvider(porps: AuthProvider) {
 
     const {token, user} = response.data;
     localStorage.setItem('@dowhile:token', token);
-    console.log(user);
+    api.defaults.headers.common.authorization = `Bearer ${token}`;
+
+    setUser(user);
 
   }
 
