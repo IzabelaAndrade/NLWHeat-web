@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import io from 'socket.io-client';
 import { api } from "../../services/api";
 
 import styles from './styles.module.scss';
@@ -12,16 +13,39 @@ type Message = {
     avatar_url: string;
   }
 }
+
+const messageQueue: Message[] = [];
+
+const socket = io('http://localhost:4000');
+
+socket.on('new_message', (newMessage: Message) => {
+  messageQueue.push(newMessage);
+})
  
 export function MessageList() {
 
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-      api.get<Message[]>('messages/last3').then(response => {
-        setMessages(response.data);
-      })
+    console.log('entrou');
+    const timer = setInterval(() => {
+      console.log('executou');
+      if(messageQueue.length > 0) {
+        setMessages(oldValue => [
+          messageQueue[0],
+          oldValue[0],
+          oldValue[1],
+        ].filter(Boolean));
 
+        messageQueue.shift()
+      }
+    }, 3000)
+  },[])
+
+  useEffect(() => {
+    api.get<Message[]>('messages/last3').then(response => {
+      setMessages(response.data);
+    })
   },[])
   return(
     <div className={styles.messageListWrapper}>

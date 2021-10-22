@@ -13,8 +13,8 @@ const {user, signOut} = useContext(AuthContext);
     if (!message.trim()) {
       return;
     }
-    await api.post("messages", { message })
-    setMessage('')
+    await api.post("messages", { message });
+    setMessage('');
   }
 
   return(
