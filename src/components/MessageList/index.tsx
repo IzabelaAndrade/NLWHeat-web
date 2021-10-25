@@ -39,7 +39,9 @@ export function MessageList() {
 
         messageQueue.shift()
       }
-    }, 3000)
+    }, 3000);
+
+    return () => clearInterval(timer);
   },[])
 
   useEffect(() => {
